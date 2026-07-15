@@ -25,7 +25,7 @@
 </style></head><body>
 <div class="hdr"><h1>🏸 FinOps Badminton Tournament 2026</h1><p>Smash X Badminton Arena, Kharadi | July 17, 2026 | 9 Courts | 4-9 PM</p></div>
 <div class="tabs" id="tb"></div><div id="ct"></div>
-<button class="undo" id="undoBtn" onclick="undo()">↩ Undo</button><button class="rb" onclick="if(confirm('Reset all?')){localStorage.removeItem('bt26');location.reload();}">🔄 Reset</button>
+<button class="undo" style="${isAdmin?"""":"display:none"}" id="undoBtn" onclick="undo()">↩ Undo</button><button class="rb" onclick="if(confirm('Reset all?')){localStorage.removeItem('bt26');location.reload();}">🔄 Reset</button>
 <script>const CM={MS:"Men's Singles",WS:"Women's Singles",MD:"Men's Doubles",WD:"Women's Doubles",XD:"Mixed Doubles"};
 const cats=["Dashboard","Men's Singles","Women's Singles","Men's Doubles","Women's Doubles","Mixed Doubles"];
 let cur="Dashboard";
@@ -93,9 +93,16 @@ function gW(id){return R[id]===1?M.find(m=>m.id===id)?.p1:R[id]===2?M.find(m=>m.
 function getR2(code){const r1=M.filter(m=>m.cat===code);const r2=[];for(let i=0;i<r1.length;i+=2){if(i+1<r1.length){const w1=gW(r1[i].id),w2=gW(r1[i+1].id);r2.push({id:1000+r1[i].id,cat:code,r:"R2",t:"R2",ct:0,p1:w1||("W#"+r1[i].id),p2:w2||("W#"+r1[i+1].id)});}else{r2.push({id:1000+r1[i].id,cat:code,r:"R2",t:"R2",ct:0,p1:gW(r1[i].id)||("W#"+r1[i].id),p2:"BYE"});}}return r2;}
 function getNext(prev,rnd){const nx=[];for(let i=0;i<prev.length;i+=2){if(i+1<prev.length){const w1=R[prev[i].id]===1?prev[i].p1:R[prev[i].id]===2?prev[i].p2:null;const w2=R[prev[i+1].id]===1?prev[i+1].p1:R[prev[i+1].id]===2?prev[i+1].p2:null;nx.push({id:prev[i].id+500,cat:prev[i].cat,r:rnd,t:rnd,ct:0,p1:w1||"TBD",p2:w2||"TBD"});}};return nx;}
 function rm(m){const w=R[m.id];const t1=!m.p1||m.p1.startsWith("W#")||m.p1==="TBD";const t2=!m.p2||m.p2.startsWith("W#")||m.p2==="TBD";
-return`<div class="m"><div class="mn">${m.id<1000?m.id:"�"}</div><div class="mi">${m.t}<br>Court No# ${m.ct||"�"}</div><div class="ps"><div class="p ${w===1?"w":w===2?"l":""} ${t1?"tbd":""}" onclick="${!t1&&m.p2!=="WALKOVER"&&m.p2!=="BYE"?"setW("+m.id+",1)":""}">${m.p1}</div><span class="vs">VS</span><div class="p ${w===2?"w":w===1?"l":""} ${t2?"tbd":""}" onclick="${!t2&&m.p1!=="WALKOVER"?"setW("+m.id+",2)":""}">${m.p2}</div></div><input class="si" placeholder="S1" value="${R["s1_"+m.id]||""}" onchange="R['s1_'+${m.id}]=this.value;sv();" title="Set 1"><input class="si" placeholder="S2" value="${R["s2_"+m.id]||""}" onchange="R['s2_'+${m.id}]=this.value;sv();" title="Set 2"><input class="si" placeholder="S3" value="${R["s3_"+m.id]||""}" onchange="R['s3_'+${m.id}]=this.value;sv();" title="Set 3"></div>`;}
+return`<div class="m"><div class="mn">${m.id<1000?m.id:"�"}</div><div class="mi">${m.t}<br>Court No# ${m.ct||"�"}</div><div class="ps"><div class="p ${w===1?"w":w===2?"l":""} ${t1?"tbd":""}" onclick="${!t1&&m.p2!=="WALKOVER"&&m.p2!=="BYE"?"setW("+m.id+",1)":""}">${m.p1}</div><span class="vs">VS</span><div class="p ${w===2?"w":w===1?"l":""} ${t2?"tbd":""}" onclick="${!t2&&m.p1!=="WALKOVER"?"setW("+m.id+",2)":""}">${m.p2}</div></div><input class="si" placeholder="S1" ${isAdmin?"":"readonly"} value="${R["s1_"+m.id]||""}" onchange="R['s1_'+${m.id}]=this.value;sv();" title="Set 1"><input class="si" placeholder="S2" ${isAdmin?"":"readonly"} value="${R["s2_"+m.id]||""}" onchange="R['s2_'+${m.id}]=this.value;sv();" title="Set 2"><input class="si" placeholder="S3" ${isAdmin?"":"readonly"} value="${R["s3_"+m.id]||""}" onchange="R['s3_'+${m.id}]=this.value;sv();" title="Set 3"></div>`;}
 let lastAction=null;
-function setW(id,p){
+let isAdmin=localStorage.getItem('bt26admin')==='true';
+function toggleAdmin(){
+  if(isAdmin){isAdmin=false;localStorage.removeItem('bt26admin');render();return;}
+  const pw=prompt('Enter admin password:');
+  if(pw==='finops2026'){isAdmin=true;localStorage.setItem('bt26admin','true');render();}
+  else{alert('Incorrect password');}
+}
+function setW(id,p){if(!isAdmin)return;
   if(R[id]===p){delete R[id];lastAction=null;}  // Click same = deselect
   else{lastAction={id,prev:R[id]};R[id]=p;}
   sv();render();updateUndo();
@@ -104,7 +111,7 @@ function undo(){if(lastAction){if(lastAction.prev)R[lastAction.id]=lastAction.pr
 function updateUndo(){const btn=document.getElementById("undoBtn");if(btn)btn.style.display=lastAction?"block":"none";}
 function switchTo(i){cur=cats[i];render();}
 function cCode(c){return Object.entries(CM).find(([k,v])=>v===c)?.[0]||"";}
-function render(){
+function render(){const ab=document.getElementById('adminBtn');if(ab)ab.innerHTML=isAdmin?'🔓 Admin':'🔒 Viewer';if(ab)ab.style.borderColor=isAdmin?'#4caf50':'#555';if(ab)ab.style.color=isAdmin?'#4caf50':'#aaa';
 document.getElementById("tb").innerHTML=cats.map((c,i)=>'<div class="tab'+(c===cur?" active":"")+'" onclick="switchTo('+i+')">'+c+'</div>').join("");
 const el=document.getElementById("ct");
 if(cur==="Dashboard"){renderD(el);return;}
