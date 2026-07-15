@@ -23,7 +23,7 @@
 .slot-matches{padding:4px 0}.hidden{display:none}
 .undo{position:fixed;bottom:15px;right:100px;background:#f39c12;color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:11px;z-index:200;display:none}.undo:hover{background:#e67e22}.rb{position:fixed;bottom:15px;right:15px;background:#e94560;color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:11px;z-index:200}
 </style></head><body>
-<div class="hdr"><h1>🏸 FinOps Badminton Tournament 2026</h1><p>Smash X Badminton Arena, Kharadi | July 17, 2026 | 9 Courts | 4-9 PM</p></div>
+<div class="hdr" style="position:relative"><h1>🏸 FinOps Badminton Tournament 2026</h1><p>Smash X Badminton Arena, Kharadi | July 17, 2026 | 9 Courts | 4-9 PM</p><button id="adminBtn" onclick="toggleAdmin()" style="position:absolute;top:12px;right:15px;background:transparent;border:1px solid #555;color:#aaa;padding:6px 14px;border-radius:15px;cursor:pointer;font-size:12px">🔒 Viewer</button></div>
 <div class="tabs" id="tb"></div><div id="ct"></div>
 <button class="undo" style="${isAdmin?"""":"display:none"}" id="undoBtn" onclick="undo()">↩ Undo</button><button class="rb" onclick="if(confirm('Reset all?')){localStorage.removeItem('bt26');location.reload();}">🔄 Reset</button>
 <script>const CM={MS:"Men's Singles",WS:"Women's Singles",MD:"Men's Doubles",WD:"Women's Doubles",XD:"Mixed Doubles"};
