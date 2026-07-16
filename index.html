@@ -176,9 +176,10 @@ function render() {
 
 function renderDashboard() {
     const el = document.getElementById('content');
-    // Stats
-    let totalDone = 0, totalMatches = MATCHES.filter(m=>m.p2!=='WALKOVER').length;
-    MATCHES.forEach(m => { if (m.p2!=='WALKOVER' && getWinner(m.n)) totalDone++; });
+    const realMatches = MATCHES.filter(m=>m.p2!=='WALKOVER');
+    let totalDone = 0;
+    realMatches.forEach(m => { if (getWinner(m.n)) totalDone++; });
+    const totalMatches = realMatches.length;
 
     let html = '<div class="stat-row">';
     html += '<div class="stat-item"><div class="stat-number">'+totalMatches+'</div><span>Total Matches</span></div>';
@@ -186,37 +187,62 @@ function renderDashboard() {
     html += '<div class="stat-item"><div class="stat-number" style="color:#3b82f6">'+(totalMatches-totalDone)+'</div><span>Remaining</span></div>';
     html += '</div>';
 
-    // Per category progress
     html += '<div class="dashboard">';
-    Object.keys(CAT_NAMES).forEach(cat => {
-        const catM = MATCHES.filter(m=>m.cat===cat && m.p2!=='WALKOVER');
-        const done = catM.filter(m=>getWinner(m.n)).length;
-        const pct = catM.length ? Math.round(done/catM.length*100) : 0;
-        html += '<div class="dash-card"><h3>'+CAT_NAMES[cat]+'</h3>';
-        html += '<div style="background:#334155;border-radius:6px;height:8px;margin:8px 0"><div style="background:#22c55e;height:8px;border-radius:6px;width:'+pct+'%"></div></div>';
-        html += '<div style="font-size:0.75rem;color:#94a3b8">'+done+'/'+catM.length+' ('+pct+'%)</div>';
-        // Show current/next matches
-        const ongoing = catM.filter(m=>!getWinner(m.n)).slice(0,3);
-        if (ongoing.length) {
-            html += '<div style="margin-top:8px;font-size:0.75rem;color:#64748b">Up Next:</div>';
-            ongoing.forEach(m => {
-                const p1 = resolvePlayer(m.p1, m.n), p2 = resolvePlayer(m.p2, m.n);
-                html += '<div class="dash-item"><span>'+p1+'</span><span>vs</span><span>'+p2+'</span></div>';
-            });
-        }
+
+    // Upcoming Matches (next 10 pending matches by time)
+    html += '<div class="dash-card"><h3>&#127942; Upcoming Matches</h3>';
+    const upcoming = realMatches.filter(m=>!getWinner(m.n)).slice(0,10);
+    if (upcoming.length === 0) {
+        html += '<div style="text-align:center;color:#4ade80;font-size:1rem;padding:20px">All matches completed!</div>';
+    } else {
+        upcoming.forEach(m => {
+            const p1 = resolvePlayer(m.p1, m.n), p2 = resolvePlayer(m.p2, m.n);
+            html += '<div class="dash-item" style="flex-wrap:wrap;gap:4px">';
+            html += '<span style="color:#f59e0b;font-weight:600;min-width:70px">'+m.t+'</span>';
+            html += '<span style="color:#64748b;min-width:55px">Ct '+m.c+'</span>';
+            html += '<span style="flex:1">'+p1+' <span style="color:#64748b">vs</span> '+p2+'</span>';
+            html += '<span class="badge badge-upcoming">'+CAT_NAMES[m.cat]+'</span>';
+            html += '</div>';
+        });
+    }
+    html += '</div>';
+
+    // Full Schedule by Time Slot
+    html += '<div class="dash-card"><h3>&#128197; Schedule by Time Slot</h3>';
+    const timeSlots = [...new Set(MATCHES.filter(m=>m.t!=='W/O').map(m=>m.t))];
+    timeSlots.forEach(t => {
+        const slotM = MATCHES.filter(m=>m.t===t && m.p2!=='WALKOVER');
+        const doneCount = slotM.filter(m=>getWinner(m.n)).length;
+        const total = slotM.length;
+        let badge;
+        if (doneCount === total) badge = '<span class="badge badge-done">Done</span>';
+        else if (doneCount > 0) badge = '<span class="badge badge-live">In Progress</span>';
+        else badge = '<span class="badge badge-upcoming">Upcoming</span>';
+        html += '<div class="dash-item">';
+        html += '<span style="font-weight:600;min-width:80px">'+t+'</span>';
+        html += '<span style="color:#94a3b8">'+doneCount+'/'+total+' matches</span>';
+        html += badge;
         html += '</div>';
     });
+    html += '</div>';
 
-    // Court status
-    html += '<div class="dash-card"><h3>&#127963; Court Schedule</h3>';
-    const timeSlots = [...new Set(MATCHES.filter(m=>m.t!=='W/O').map(m=>m.t))];
-    timeSlots.slice(0,8).forEach(t => {
-        const slotM = MATCHES.filter(m=>m.t===t);
-        const doneCount = slotM.filter(m=>getWinner(m.n)).length;
-        const badge = doneCount===slotM.length ? '<span class="badge badge-done">Done</span>' : doneCount>0 ? '<span class="badge badge-live">Live</span>' : '<span class="badge badge-upcoming">Upcoming</span>';
-        html += '<div class="dash-item"><span>'+t+' ('+slotM.length+' matches)</span>'+badge+'</div>';
-    });
-    html += '</div></div>';
+    // Recently Completed
+    html += '<div class="dash-card"><h3>&#9989; Recently Completed</h3>';
+    const completed = realMatches.filter(m=>getWinner(m.n)).slice(-8).reverse();
+    if (completed.length === 0) {
+        html += '<div style="color:#64748b;padding:10px">No matches completed yet</div>';
+    } else {
+        completed.forEach(m => {
+            const winner = getWinner(m.n);
+            html += '<div class="dash-item">';
+            html += '<span style="color:#4ade80;font-weight:600">'+winner+'</span>';
+            html += '<span class="badge" style="background:#334155;color:#94a3b8">'+m.r+'</span>';
+            html += '</div>';
+        });
+    }
+    html += '</div>';
+
+    html += '</div>';
     el.innerHTML = html;
 }
 
