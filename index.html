@@ -1,153 +1,95 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>FinOps Badminton 2026</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:Segoe UI,sans-serif;background:#1a1a2e;color:#fff;min-height:100vh}
-.hdr{background:linear-gradient(135deg,#16213e,#0f3460);padding:18px;text-align:center;border-bottom:3px solid #e94560}
-.hdr h1{font-size:24px}.hdr p{color:#a8d8ea;font-size:12px;margin-top:4px}
-.tabs{display:flex;justify-content:center;gap:5px;padding:10px;background:#16213e;flex-wrap:wrap;position:sticky;top:0;z-index:100}
-.tab{padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:600;font-size:12px;border:2px solid #333;color:#aaa;background:transparent}
+.hdr{background:linear-gradient(135deg,#16213e,#0f3460);padding:18px;text-align:center;border-bottom:3px solid #e94560;position:relative}
+.hdr h1{font-size:22px}.hdr p{color:#a8d8ea;font-size:11px;margin-top:4px}
+#adminBtn{position:absolute;top:10px;right:12px;background:transparent;border:1px solid #555;color:#aaa;padding:5px 12px;border-radius:15px;cursor:pointer;font-size:11px}
+.tabs{display:flex;justify-content:center;gap:4px;padding:8px;background:#16213e;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.tab{padding:7px 14px;border-radius:18px;cursor:pointer;font-weight:600;font-size:11px;border:2px solid #333;color:#aaa;background:transparent}
 .tab.active{background:#e94560;color:#fff;border-color:#e94560}.tab:hover{border-color:#e94560;color:#fff}
-#ct{padding:20px;max-width:1100px;margin:0 auto}
-.rt{font-size:15px;font-weight:700;color:#e94560;margin:18px 0 8px;padding:7px 12px;border-left:4px solid #e94560;background:rgba(233,69,96,.1);border-radius:0 8px 8px 0}
+#ct{padding:15px;max-width:1100px;margin:0 auto}
+.rt{font-size:14px;font-weight:700;color:#e94560;margin:15px 0 6px;padding:6px 10px;border-left:4px solid #e94560;background:rgba(233,69,96,.1);border-radius:0 6px 6px 0}
 .rt.green{border-color:#4caf50;color:#4caf50;background:rgba(76,175,80,.1)}
-.m{display:flex;align-items:center;background:#16213e;border-radius:8px;padding:8px 10px;margin:5px 0;border:1px solid #333}
-.m:hover{border-color:#e94560}.mn{background:#e94560;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-right:8px;flex-shrink:0}
-.mi{color:#a8d8ea;font-size:10px;width:110px;flex-shrink:0;line-height:1.4}
-.ps{flex:1;display:flex;align-items:center;gap:6px}.p{flex:1;padding:6px 8px;border-radius:5px;background:#0f3460;text-align:center;font-size:11px;cursor:pointer;border:2px solid transparent}
-.p:hover{border-color:#e94560}.p.w{background:#1b5e20;border-color:#4caf50;color:#4caf50;font-weight:700}.p.l{opacity:.4;text-decoration:line-through}.p.tbd{opacity:.5;cursor:default;font-style:italic}
-.vs{color:#e94560;font-weight:700;font-size:10px}.si{width:42px;background:#0f3460;border:1px solid #333;color:#fff;padding:3px 5px;border-radius:4px;font-size:10px;text-align:center;margin-left:6px}
-.sts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:15px 0}
-.sc{background:#16213e;border-radius:8px;padding:12px;text-align:center;border:1px solid #333}.sc .n{font-size:26px;font-weight:900;color:#e94560}.sc .lb{font-size:10px;color:#aaa;margin-top:3px}
-.pb{width:100%;height:7px;background:#333;border-radius:4px;margin:12px 0}.pf{height:100%;background:linear-gradient(90deg,#e94560,#4caf50);border-radius:4px;transition:width .5s}
-.slot{padding:8px 12px;border-bottom:1px solid #222;cursor:pointer}.slot:hover{background:#16213e}
-.slot-matches{padding:4px 0}.hidden{display:none}
-.undo{position:fixed;bottom:15px;right:100px;background:#f39c12;color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:11px;z-index:200;display:none}.undo:hover{background:#e67e22}.rb{position:fixed;bottom:15px;right:15px;background:#e94560;color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:11px;z-index:200}
-</style><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script></head><body>
-<div class="hdr" style="position:relative"><h1>🏸 FinOps Badminton Tournament 2026</h1><p>Smash X Badminton Arena, Kharadi | July 17, 2026 | 9 Courts | 4-9 PM</p><button id="adminBtn" onclick="toggleAdmin()" style="position:absolute;top:12px;right:15px;background:transparent;border:1px solid #555;color:#aaa;padding:6px 14px;border-radius:15px;cursor:pointer;font-size:12px">🔒 Viewer</button></div>
+.m{display:flex;align-items:center;background:#16213e;border-radius:8px;padding:7px 8px;margin:4px 0;border:1px solid #333;flex-wrap:wrap}
+.m:hover{border-color:#e94560}.mn{background:#e94560;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-right:6px;flex-shrink:0}
+.mi{color:#a8d8ea;font-size:9px;width:95px;flex-shrink:0;line-height:1.3}
+.ps{flex:1;display:flex;align-items:center;gap:5px;min-width:250px}.p{flex:1;padding:5px 6px;border-radius:5px;background:#0f3460;text-align:center;font-size:11px;cursor:pointer;border:2px solid transparent}
+.p:hover{border-color:#e94560}.p.w{background:#1b5e20;border-color:#4caf50;color:#4caf50;font-weight:700}.p.l{opacity:.4;text-decoration:line-through}.p.tbd{opacity:.5;cursor:default;font-style:italic}.p.locked{cursor:default}
+.vs{color:#e94560;font-weight:700;font-size:9px}
+.scores{display:flex;gap:3px;margin-left:5px}.si{width:38px;background:#0f3460;border:1px solid #333;color:#fff;padding:3px;border-radius:4px;font-size:9px;text-align:center}
+.sts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.sc{background:#16213e;border-radius:8px;padding:10px;text-align:center;border:1px solid #333}.sc .n{font-size:24px;font-weight:900;color:#e94560}.sc .lb{font-size:9px;color:#aaa;margin-top:2px}
+.pb{width:100%;height:6px;background:#333;border-radius:3px;margin:10px 0}.pf{height:100%;background:linear-gradient(90deg,#e94560,#4caf50);border-radius:3px;transition:width .5s}
+.slot{padding:7px 10px;border-bottom:1px solid #222;cursor:pointer}.slot:hover{background:#16213e}.hidden{display:none}
+
+</style></head><body>
+<div class="hdr"><h1>&#127992; FinOps Badminton Tournament 2026</h1><p>Smash X Arena, Kharadi | July 17, 2026 | 9 Courts</p><button id="adminBtn" onclick="toggleAdmin()"> VIEWER</button></div>
 <div class="tabs" id="tb"></div><div id="ct"></div>
-<button class="undo" style="${isAdmin?"""":"display:none"}" id="undoBtn" onclick="undo()">↩ Undo</button><button class="rb" onclick="if(confirm('Reset all?')){db.set({});R={};render();}">🔄 Reset</button>
-<script>const CM={MS:"Men's Singles",WS:"Women's Singles",MD:"Men's Doubles",WD:"Women's Doubles",XD:"Mixed Doubles"};
+
+<script>
+firebase.initializeApp({apiKey:"AIzaSyCbzBQzgol3Q6hqJ5xCXoEOeldLyregNgE",authDomain:"finops-badminton-2026.firebaseapp.com",databaseURL:"https://finops-badminton-2026-default-rtdb.firebaseio.com",projectId:"finops-badminton-2026",storageBucket:"finops-badminton-2026.firebasestorage.app",messagingSenderId:"152742135325",appId:"1:152742135325:web:7dbeba371fcf824ad8e8f4"});
+const db=firebase.database().ref("results");
+let R={};
+let isAdmin=localStorage.getItem("bt26admin")==="true";
+// Real-time listener
+db.on("value",snap=>{R=snap.val()||{};render();});
+function sv(){db.set(R);}
+function toggleAdmin(){if(isAdmin){isAdmin=false;localStorage.removeItem("bt26admin");}else{const pw=prompt("Enter admin password:");if(pw==="finops2026"){isAdmin=true;localStorage.setItem("bt26admin","true");}else{alert("Incorrect");return;}}render();}const CM={MS:"Men's Singles",WS:"Women's Singles",MD:"Men's Doubles",WD:"Women's Doubles",XD:"Mixed Doubles"};
 const cats=["Dashboard","Men's Singles","Women's Singles","Men's Doubles","Women's Doubles","Mixed Doubles"];
 let cur="Dashboard";
-let R={};\nconst firebaseConfig={apiKey:"AIzaSyCbzBQzgol3Q6hqJ5xCXoEOeldLyregNgE",authDomain:"finops-badminton-2026.firebaseapp.com",databaseURL:"https://finops-badminton-2026-default-rtdb.firebaseio.com",projectId:"finops-badminton-2026",storageBucket:"finops-badminton-2026.firebasestorage.app",messagingSenderId:"152742135325",appId:"1:152742135325:web:7dbeba371fcf824ad8e8f4"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database().ref("results");
-let firebaseReady=false;
-// Listen for real-time changes
-db.on("value",(snap)=>{
-  const data=snap.val();
-  if(data){R=data;}else{R={};}
-  firebaseReady=true;
-  render();
-});
-function sv(){db.set(R);}
 const M=[
-{id:1,cat:"MS",r:"R1",t:"4:15 PM",ct:3,p1:"Vaibhav Gundecha",p2:"Rajas Gokhale"},{id:2,cat:"MS",r:"R1",t:"4:15 PM",ct:9,p1:"Kirit Lakhani",p2:"Jain Abhishek"},
-{id:3,cat:"MS",r:"R1",t:"4:27 PM",ct:1,p1:"Prajjwal Majumder",p2:"Manish Sharma"},{id:4,cat:"MS",r:"R1",t:"4:27 PM",ct:2,p1:"Akash Gupta",p2:"Suraj Bishwas"},
-{id:5,cat:"MS",r:"R1",t:"4:39 PM",ct:2,p1:"Yash Kale",p2:"R Bismay"},{id:6,cat:"MS",r:"R1",t:"4:39 PM",ct:5,p1:"Christopher Dass",p2:"Chandrakant Rajpurohit"},
-{id:7,cat:"MS",r:"R1",t:"5:43 PM",ct:3,p1:"Pratik Iyer",p2:"Shubh Srivastava"},{id:8,cat:"MS",r:"R1",t:"4:51 PM",ct:2,p1:"Kevin Fernandes",p2:"Mukesh Gadhave"},
-{id:9,cat:"MS",r:"R1",t:"4:51 PM",ct:3,p1:"Rohit Vidhate",p2:"Swaraj Malusare"},{id:10,cat:"MS",r:"R1",t:"4:51 PM",ct:5,p1:"Dustin Vanspall",p2:"Nikhil Kale"},
-{id:11,cat:"MS",r:"R1",t:"4:51 PM",ct:9,p1:"Shubham Vaishnav",p2:"Girish Dixit"},{id:12,cat:"MS",r:"R1",t:"5:03 PM",ct:3,p1:"Shubham Kumar",p2:"Raghavendra RM"},
-{id:13,cat:"MS",r:"R1",t:"5:15 PM",ct:1,p1:"Swapnil Jamdade",p2:"Neeraj Singh"},{id:14,cat:"MS",r:"R1",t:"5:15 PM",ct:2,p1:"Sidhant Pandey",p2:"Biswajit Sharma"},
-{id:15,cat:"MS",r:"R1",t:"5:15 PM",ct:4,p1:"Vivek Dangi",p2:"Sagar Nair"},{id:16,cat:"MS",r:"R1",t:"5:15 PM",ct:5,p1:"Dhanesh Lokhande",p2:"Shrijeet Naidu"},
-{id:17,cat:"MS",r:"R1",t:"5:15 PM",ct:6,p1:"Sourav Bhattacharya",p2:"WALKOVER"},{id:18,cat:"MS",r:"R1",t:"5:27 PM",ct:3,p1:"Rahul Lalwani",p2:"Sourabh Bongarde"},
-{id:19,cat:"MS",r:"R1",t:"5:43 PM",ct:7,p1:"Dhanush Dev",p2:"Anjesh Singh"},{id:20,cat:"MS",r:"R1",t:"5:27 PM",ct:6,p1:"B Mohan Balaji",p2:"Chandresh Singh"},
-{id:21,cat:"MS",r:"R1",t:"5:27 PM",ct:8,p1:"Amol Sondhiya",p2:"Kunal Das"},{id:22,cat:"MS",r:"R1",t:"5:43 PM",ct:9,p1:"Naman Dayal",p2:"Pravin Prajapati"},
-{id:23,cat:"MS",r:"R1",t:"5:39 PM",ct:4,p1:"Shivraj Bobade",p2:"Priyansh Dodwani"},{id:24,cat:"MS",r:"R1",t:"5:39 PM",ct:5,p1:"Gaurav Babel",p2:"Ajay"},
-{id:25,cat:"MS",r:"R1",t:"5:39 PM",ct:6,p1:"Piyush Arya",p2:"Abhishek Varma"},
-{id:26,cat:"WS",r:"R1",t:"4:15 PM",ct:1,p1:"Shristi Dahiya",p2:"Jweli Edward"},{id:27,cat:"WS",r:"R1",t:"4:15 PM",ct:2,p1:"Nikita Shirsat",p2:"Aditi Agrawal"},
-{id:28,cat:"WS",r:"R1",t:"4:15 PM",ct:6,p1:"Vishakha Hasurkar",p2:"Shamal Redekar"},{id:29,cat:"WS",r:"R1",t:"4:15 PM",ct:7,p1:"Astha Jain",p2:"Aishwarya Khanwelkar"},
-{id:30,cat:"WS",r:"R1",t:"4:27 PM",ct:4,p1:"Harshika Bhushan",p2:"Priyanka Souz"},{id:31,cat:"WS",r:"R1",t:"4:27 PM",ct:6,p1:"Bindu Singh",p2:"Mariam Elizabeth"},
-{id:32,cat:"WS",r:"R1",t:"4:27 PM",ct:9,p1:"Darshana Wagholikar",p2:"Ashwani Soni"},{id:33,cat:"WS",r:"R1",t:"4:39 PM",ct:6,p1:"Pranali Shelar",p2:"Shivani Rathore"},
-{id:34,cat:"WS",r:"R1",t:"4:51 PM",ct:4,p1:"Divya Samel",p2:"Khushboo Agarwal"},{id:35,cat:"WS",r:"R1",t:"4:51 PM",ct:7,p1:"Akshada Suryawanshi",p2:"Manikamma Ghagare"},
-{id:36,cat:"WS",r:"R1",t:"5:03 PM",ct:1,p1:"Karishma Deshpande",p2:"Sushmitha Pol"},{id:37,cat:"WS",r:"R1",t:"5:15 PM",ct:7,p1:"Shivani Dhumal",p2:"Tanvi Mehta"},
-{id:38,cat:"WS",r:"R1",t:"5:43 PM",ct:6,p1:"Vaishnavi",p2:"Gauri Thakre"},{id:39,cat:"WS",r:"R1",t:"5:27 PM",ct:2,p1:"Priyanka Singh",p2:"Saneeah"},
-{id:40,cat:"WS",r:"R1",t:"5:43 PM",ct:8,p1:"Rutika Kulkarni",p2:"Shirisha Kamte"},{id:41,cat:"WS",r:"R1",t:"5:39 PM",ct:8,p1:"Swati Lokhande",p2:"Rupali Gondole"},
-{id:42,cat:"WS",r:"R1",t:"5:39 PM",ct:9,p1:"Hiteshwari Nahariya",p2:"Jaee Gadge"},{id:43,cat:"WS",r:"R1",t:"5:51 PM",ct:2,p1:"Prachi Kamble",p2:"Aryika Damle"},
-{id:44,cat:"MD",r:"R1",t:"4:15 PM",ct:4,p1:"Kunal Das & Swaraj Malusare",p2:"B Mohan Balaji & Priyansh Dodwani"},
-{id:45,cat:"MD",r:"R1",t:"4:15 PM",ct:5,p1:"Hitesh Punjabi & Sourabh Bongarde",p2:"Prajjwal Majumder & Manish Sharma"},
-{id:46,cat:"MD",r:"R1",t:"4:15 PM",ct:8,p1:"Chandresh Singh & Naman Dayal",p2:"Sagar Nair & Shivraj Bobade"},
-{id:47,cat:"MD",r:"R1",t:"5:43 PM",ct:1,p1:"Shubh Srivastava & Pravin Prajapati",p2:"Anjesh Singh & Pratik Iyer"},
-{id:48,cat:"MD",r:"R1",t:"5:03 PM",ct:2,p1:"Amol Sondhiya & Ajay",p2:"R Bismay & Biswajit Sharma"},
-{id:49,cat:"MD",r:"R1",t:"5:03 PM",ct:8,p1:"Mukesh Gadhave & Suraj Bishwas",p2:"Rajas Gokhale & Nikhil Kale"},
-{id:50,cat:"MD",r:"R1",t:"5:43 PM",ct:4,p1:"Rishabh Agarwal & Shrikant",p2:"Rohit Vidhate & Dhanesh Lokhande"},
-{id:51,cat:"MD",r:"R1",t:"5:15 PM",ct:9,p1:"Mohnish Gujre & Yash Kale",p2:"Aniket Jadhav & Aditya Ramphale"},
-{id:52,cat:"MD",r:"R1",t:"5:27 PM",ct:1,p1:"Gaurav Anil & Sourav Bhattacharya",p2:"Prajwal Pujari & Gaurav Babel"},
-{id:53,cat:"MD",r:"R1",t:"5:27 PM",ct:4,p1:"Chandrakant Rajpurohit & Swapnil Jamdade",p2:"WALKOVER"},
-{id:54,cat:"WD",r:"R1",t:"4:27 PM",ct:7,p1:"Jaee Gadge & Manikamma Ghagare",p2:"Shivani Rathore & Ashwini Vinod"},
-{id:55,cat:"WD",r:"R1",t:"4:39 PM",ct:8,p1:"Karishma Deshpande & Hiteshwari Nahariya",p2:"Harshika Bhushan & Brissy George"},
-{id:56,cat:"WD",r:"R1",t:"4:51 PM",ct:6,p1:"Prachi Kamble & Shivani Dhumal",p2:"Ankita Sephiya & Nisha Aithani"},
-{id:57,cat:"WD",r:"R1",t:"5:03 PM",ct:5,p1:"Mariam Elizabeth & Prajakta Naikare",p2:"Nikita Shirsat & Akshada Suryawanshi"},
-{id:58,cat:"WD",r:"R1",t:"5:03 PM",ct:6,p1:"Richa Jaiswal & Swati Khureja",p2:"Bindu Singh & Priyanka Souz"},
-{id:59,cat:"WD",r:"R1",t:"5:39 PM",ct:1,p1:"Aditi Agrawal & Surbhi Sharma",p2:"Aryika Damle & Saneeah"},
-{id:60,cat:"WD",r:"R1",t:"5:39 PM",ct:7,p1:"Jweli Edward & Swati Lokhande",p2:"Sonali Sawant & Vedanti Bolakhe"},
-{id:61,cat:"WD",r:"R1",t:"5:51 PM",ct:3,p1:"Rutika Kulkarni & Shristi Dahiya",p2:"Sushmitha Pol & Pranali Shelar"},
-{id:62,cat:"XD",r:"R1",t:"4:27 PM",ct:3,p1:"Tanvi Mehta & Nikhil Kale",p2:"Jweli Edward & Chandrakant Rajpurohit"},
-{id:63,cat:"XD",r:"R1",t:"4:27 PM",ct:8,p1:"Swati Lokhande & Pranay Bajare",p2:"Diya Ganguli & Dhanesh Lokhande"},
-{id:64,cat:"XD",r:"R1",t:"5:43 PM",ct:2,p1:"Shubh Srivastava & Vaishnavi",p2:"Prajjwal Majumder & Darshana Wagholikar"},
-{id:65,cat:"XD",r:"R1",t:"4:39 PM",ct:3,p1:"Rutika Kulkarni & Pratik Iyer",p2:"Mukesh Gadhave & Prajakta Naikare"},
-{id:66,cat:"XD",r:"R1",t:"4:39 PM",ct:4,p1:"Menka Yadav & Kunal Das",p2:"Ashwani Soni & Akshat Mourya"},
-{id:67,cat:"XD",r:"R1",t:"4:39 PM",ct:7,p1:"Anjali Singh & Vipin Koul",p2:"WALKOVER"},
-{id:68,cat:"XD",r:"R1",t:"4:39 PM",ct:9,p1:"Rutuja Rawal & Suraj Gupte",p2:"Radhika Wadkar & Biswajit Sharma"},
-{id:69,cat:"XD",r:"R1",t:"4:51 PM",ct:8,p1:"Karishma Deshpande & Laxman",p2:"Shristi Dahiya & Anjesh Singh"},
-{id:70,cat:"XD",r:"R1",t:"5:03 PM",ct:7,p1:"Akash & Khushboo",p2:"Aditi Agrawal & Chandresh Singh"},
-{id:71,cat:"XD",r:"R1",t:"5:43 PM",ct:5,p1:"Pravin Prajapati & Shirisha Kamte",p2:"Harshika Bhushan & Shardul Apte"},
-{id:72,cat:"XD",r:"R1",t:"5:27 PM",ct:9,p1:"Mariam Elizabeth & Suraj Bishwas",p2:"Shivani Rathore & R Bismay"},
-{id:73,cat:"XD",r:"R1",t:"5:39 PM",ct:2,p1:"Sushmitha Pol & Swapnil Jamdade",p2:"Ashwini Vinod & Gaurav Anil"},
-{id:74,cat:"XD",r:"R1",t:"5:51 PM",ct:1,p1:"Priyanka Singh & Neeraj Singh",p2:"Surbhi Sharma & Rohit Vidhate"},
-{id:75,cat:"XD",r:"R1",t:"5:51 PM",ct:4,p1:"Nikita Shirsat & Rahul Lalwani",p2:"Shivangi Sharma & Vivek Dangi"}
+{id:1,cat:"MS",r:"R1",t:"4:15 PM",ct:3,p1:"Vaibhav Gundecha",p2:"Rajas Gokhale"},{id:2,cat:"MS",r:"R1",t:"4:15 PM",ct:9,p1:"Kirit Lakhani",p2:"Jain Abhishek"},{id:3,cat:"MS",r:"R1",t:"4:27 PM",ct:1,p1:"Prajjwal Majumder",p2:"Manish Sharma"},{id:4,cat:"MS",r:"R1",t:"4:27 PM",ct:2,p1:"Akash Gupta",p2:"Suraj Bishwas"},{id:5,cat:"MS",r:"R1",t:"4:39 PM",ct:2,p1:"Yash Kale",p2:"R Bismay"},{id:6,cat:"MS",r:"R1",t:"4:39 PM",ct:5,p1:"Christopher Dass",p2:"Chandrakant Rajpurohit"},{id:7,cat:"MS",r:"R1",t:"5:43 PM",ct:3,p1:"Pratik Iyer",p2:"Shubh Srivastava"},{id:8,cat:"MS",r:"R1",t:"4:51 PM",ct:2,p1:"Kevin Fernandes",p2:"Mukesh Gadhave"},{id:9,cat:"MS",r:"R1",t:"4:51 PM",ct:3,p1:"Rohit Vidhate",p2:"Swaraj Malusare"},{id:10,cat:"MS",r:"R1",t:"4:51 PM",ct:5,p1:"Dustin Vanspall",p2:"Nikhil Kale"},{id:11,cat:"MS",r:"R1",t:"4:51 PM",ct:9,p1:"Shubham Vaishnav",p2:"Girish Dixit"},{id:12,cat:"MS",r:"R1",t:"5:03 PM",ct:3,p1:"Shubham Kumar",p2:"Raghavendra RM"},{id:13,cat:"MS",r:"R1",t:"5:15 PM",ct:1,p1:"Swapnil Jamdade",p2:"Neeraj Singh"},{id:14,cat:"MS",r:"R1",t:"5:15 PM",ct:2,p1:"Sidhant Pandey",p2:"Biswajit Sharma"},{id:15,cat:"MS",r:"R1",t:"5:15 PM",ct:4,p1:"Vivek Dangi",p2:"Sagar Nair"},{id:16,cat:"MS",r:"R1",t:"5:15 PM",ct:5,p1:"Dhanesh Lokhande",p2:"Shrijeet Naidu"},{id:17,cat:"MS",r:"R1",t:"5:15 PM",ct:6,p1:"Sourav Bhattacharya",p2:"WALKOVER"},{id:18,cat:"MS",r:"R1",t:"5:27 PM",ct:3,p1:"Rahul Lalwani",p2:"Sourabh Bongarde"},{id:19,cat:"MS",r:"R1",t:"5:43 PM",ct:7,p1:"Dhanush Dev",p2:"Anjesh Singh"},{id:20,cat:"MS",r:"R1",t:"5:27 PM",ct:6,p1:"B Mohan Balaji",p2:"Chandresh Singh"},{id:21,cat:"MS",r:"R1",t:"5:27 PM",ct:8,p1:"Amol Sondhiya",p2:"Kunal Das"},{id:22,cat:"MS",r:"R1",t:"5:43 PM",ct:9,p1:"Naman Dayal",p2:"Pravin Prajapati"},{id:23,cat:"MS",r:"R1",t:"5:39 PM",ct:4,p1:"Shivraj Bobade",p2:"Priyansh Dodwani"},{id:24,cat:"MS",r:"R1",t:"5:39 PM",ct:5,p1:"Gaurav Babel",p2:"Ajay"},{id:25,cat:"MS",r:"R1",t:"5:39 PM",ct:6,p1:"Piyush Arya",p2:"Abhishek Varma"},
+{id:26,cat:"WS",r:"R1",t:"4:15 PM",ct:1,p1:"Shristi Dahiya",p2:"Jweli Edward"},{id:27,cat:"WS",r:"R1",t:"4:15 PM",ct:2,p1:"Nikita Shirsat",p2:"Aditi Agrawal"},{id:28,cat:"WS",r:"R1",t:"4:15 PM",ct:6,p1:"Vishakha Hasurkar",p2:"Shamal Redekar"},{id:29,cat:"WS",r:"R1",t:"4:15 PM",ct:7,p1:"Astha Jain",p2:"Aishwarya Khanwelkar"},{id:30,cat:"WS",r:"R1",t:"4:27 PM",ct:4,p1:"Harshika Bhushan",p2:"Priyanka Souz"},{id:31,cat:"WS",r:"R1",t:"4:27 PM",ct:6,p1:"Bindu Singh",p2:"Mariam Elizabeth"},{id:32,cat:"WS",r:"R1",t:"4:27 PM",ct:9,p1:"Darshana Wagholikar",p2:"Ashwani Soni"},{id:33,cat:"WS",r:"R1",t:"4:39 PM",ct:6,p1:"Pranali Shelar",p2:"Shivani Rathore"},{id:34,cat:"WS",r:"R1",t:"4:51 PM",ct:4,p1:"Divya Samel",p2:"Khushboo Agarwal"},{id:35,cat:"WS",r:"R1",t:"4:51 PM",ct:7,p1:"Akshada Suryawanshi",p2:"Manikamma Ghagare"},{id:36,cat:"WS",r:"R1",t:"5:03 PM",ct:1,p1:"Karishma Deshpande",p2:"Sushmitha Pol"},{id:37,cat:"WS",r:"R1",t:"5:15 PM",ct:7,p1:"Shivani Dhumal",p2:"Tanvi Mehta"},{id:38,cat:"WS",r:"R1",t:"5:43 PM",ct:6,p1:"Vaishnavi",p2:"Gauri Thakre"},{id:39,cat:"WS",r:"R1",t:"5:27 PM",ct:2,p1:"Priyanka Singh",p2:"Saneeah"},{id:40,cat:"WS",r:"R1",t:"5:43 PM",ct:8,p1:"Rutika Kulkarni",p2:"Shirisha Kamte"},{id:41,cat:"WS",r:"R1",t:"5:39 PM",ct:8,p1:"Swati Lokhande",p2:"Rupali Gondole"},{id:42,cat:"WS",r:"R1",t:"5:39 PM",ct:9,p1:"Hiteshwari Nahariya",p2:"Jaee Gadge"},{id:43,cat:"WS",r:"R1",t:"5:51 PM",ct:2,p1:"Prachi Kamble",p2:"Aryika Damle"},
+{id:44,cat:"MD",r:"R1",t:"4:15 PM",ct:4,p1:"Kunal Das & Swaraj Malusare",p2:"B Mohan Balaji & Priyansh Dodwani"},{id:45,cat:"MD",r:"R1",t:"4:15 PM",ct:5,p1:"Hitesh Punjabi & Sourabh Bongarde",p2:"Prajjwal Majumder & Manish Sharma"},{id:46,cat:"MD",r:"R1",t:"4:15 PM",ct:8,p1:"Chandresh Singh & Naman Dayal",p2:"Sagar Nair & Shivraj Bobade"},{id:47,cat:"MD",r:"R1",t:"5:43 PM",ct:1,p1:"Shubh Srivastava & Pravin Prajapati",p2:"Anjesh Singh & Pratik Iyer"},{id:48,cat:"MD",r:"R1",t:"5:03 PM",ct:2,p1:"Amol Sondhiya & Ajay",p2:"R Bismay & Biswajit Sharma"},{id:49,cat:"MD",r:"R1",t:"5:03 PM",ct:8,p1:"Mukesh Gadhave & Suraj Bishwas",p2:"Rajas Gokhale & Nikhil Kale"},{id:50,cat:"MD",r:"R1",t:"5:43 PM",ct:4,p1:"Rishabh Agarwal & Shrikant",p2:"Rohit Vidhate & Dhanesh Lokhande"},{id:51,cat:"MD",r:"R1",t:"5:15 PM",ct:9,p1:"Mohnish Gujre & Yash Kale",p2:"Aniket Jadhav & Aditya Ramphale"},{id:52,cat:"MD",r:"R1",t:"5:27 PM",ct:1,p1:"Gaurav Anil & Sourav Bhattacharya",p2:"Prajwal Pujari & Gaurav Babel"},{id:53,cat:"MD",r:"R1",t:"5:27 PM",ct:4,p1:"Chandrakant Rajpurohit & Swapnil Jamdade",p2:"WALKOVER"},
+{id:54,cat:"WD",r:"R1",t:"4:27 PM",ct:7,p1:"Jaee Gadge & Manikamma Ghagare",p2:"Shivani Rathore & Ashwini Vinod"},{id:55,cat:"WD",r:"R1",t:"4:39 PM",ct:8,p1:"Karishma Deshpande & Hiteshwari Nahariya",p2:"Harshika Bhushan & Brissy George"},{id:56,cat:"WD",r:"R1",t:"4:51 PM",ct:6,p1:"Prachi Kamble & Shivani Dhumal",p2:"Ankita Sephiya & Nisha Aithani"},{id:57,cat:"WD",r:"R1",t:"5:03 PM",ct:5,p1:"Mariam Elizabeth & Prajakta Naikare",p2:"Nikita Shirsat & Akshada Suryawanshi"},{id:58,cat:"WD",r:"R1",t:"5:03 PM",ct:6,p1:"Richa Jaiswal & Swati Khureja",p2:"Bindu Singh & Priyanka Souz"},{id:59,cat:"WD",r:"R1",t:"5:39 PM",ct:1,p1:"Aditi Agrawal & Surbhi Sharma",p2:"Aryika Damle & Saneeah"},{id:60,cat:"WD",r:"R1",t:"5:39 PM",ct:7,p1:"Jweli Edward & Swati Lokhande",p2:"Sonali Sawant & Vedanti Bolakhe"},{id:61,cat:"WD",r:"R1",t:"5:51 PM",ct:3,p1:"Rutika Kulkarni & Shristi Dahiya",p2:"Sushmitha Pol & Pranali Shelar"},
+{id:62,cat:"XD",r:"R1",t:"4:27 PM",ct:3,p1:"Tanvi Mehta & Nikhil Kale",p2:"Jweli Edward & Chandrakant Rajpurohit"},{id:63,cat:"XD",r:"R1",t:"4:27 PM",ct:8,p1:"Swati Lokhande & Pranay Bajare",p2:"Diya Ganguli & Dhanesh Lokhande"},{id:64,cat:"XD",r:"R1",t:"5:43 PM",ct:2,p1:"Shubh Srivastava & Vaishnavi",p2:"Prajjwal Majumder & Darshana Wagholikar"},{id:65,cat:"XD",r:"R1",t:"4:39 PM",ct:3,p1:"Rutika Kulkarni & Pratik Iyer",p2:"Mukesh Gadhave & Prajakta Naikare"},{id:66,cat:"XD",r:"R1",t:"4:39 PM",ct:4,p1:"Menka Yadav & Kunal Das",p2:"Ashwani Soni & Akshat Mourya"},{id:67,cat:"XD",r:"R1",t:"4:39 PM",ct:7,p1:"Anjali Singh & Vipin Koul",p2:"WALKOVER"},{id:68,cat:"XD",r:"R1",t:"4:39 PM",ct:9,p1:"Rutuja Rawal & Suraj Gupte",p2:"Radhika Wadkar & Biswajit Sharma"},{id:69,cat:"XD",r:"R1",t:"4:51 PM",ct:8,p1:"Karishma Deshpande & Laxman",p2:"Shristi Dahiya & Anjesh Singh"},{id:70,cat:"XD",r:"R1",t:"5:03 PM",ct:7,p1:"Akash & Khushboo",p2:"Aditi Agrawal & Chandresh Singh"},{id:71,cat:"XD",r:"R1",t:"5:43 PM",ct:5,p1:"Pravin Prajapati & Shirisha Kamte",p2:"Harshika Bhushan & Shardul Apte"},{id:72,cat:"XD",r:"R1",t:"5:27 PM",ct:9,p1:"Mariam Elizabeth & Suraj Bishwas",p2:"Shivani Rathore & R Bismay"},{id:73,cat:"XD",r:"R1",t:"5:39 PM",ct:2,p1:"Sushmitha Pol & Swapnil Jamdade",p2:"Ashwini Vinod & Gaurav Anil"},{id:74,cat:"XD",r:"R1",t:"5:51 PM",ct:1,p1:"Priyanka Singh & Neeraj Singh",p2:"Surbhi Sharma & Rohit Vidhate"},{id:75,cat:"XD",r:"R1",t:"5:51 PM",ct:4,p1:"Nikita Shirsat & Rahul Lalwani",p2:"Shivangi Sharma & Vivek Dangi"}
 ];
-// Auto walkovers
-M.filter(m=>m.p2==="WALKOVER").forEach(m=>{if(!R[m.id])R[m.id]=1;});sv();
-function gW(id){return R[id]===1?M.find(m=>m.id===id)?.p1:R[id]===2?M.find(m=>m.id===id)?.p2:null;}
-function getR2(code){const r1=M.filter(m=>m.cat===code);const r2=[];for(let i=0;i<r1.length;i+=2){if(i+1<r1.length){const w1=gW(r1[i].id),w2=gW(r1[i+1].id);r2.push({id:1000+r1[i].id,cat:code,r:"R2",t:"R2",ct:0,p1:w1||("W#"+r1[i].id),p2:w2||("W#"+r1[i+1].id)});}else{r2.push({id:1000+r1[i].id,cat:code,r:"R2",t:"R2",ct:0,p1:gW(r1[i].id)||("W#"+r1[i].id),p2:"BYE"});}}return r2;}
-function getNext(prev,rnd){const nx=[];for(let i=0;i<prev.length;i+=2){if(i+1<prev.length){const w1=R[prev[i].id]===1?prev[i].p1:R[prev[i].id]===2?prev[i].p2:null;const w2=R[prev[i+1].id]===1?prev[i+1].p1:R[prev[i+1].id]===2?prev[i+1].p2:null;nx.push({id:prev[i].id+500,cat:prev[i].cat,r:rnd,t:rnd,ct:0,p1:w1||"TBD",p2:w2||"TBD"});}};return nx;}
-function rm(m){const w=R[m.id];const t1=!m.p1||m.p1.startsWith("W#")||m.p1==="TBD";const t2=!m.p2||m.p2.startsWith("W#")||m.p2==="TBD";
-return`<div class="m"><div class="mn">${m.id<1000?m.id:"�"}</div><div class="mi">${m.t}<br>Court No# ${m.ct||"�"}</div><div class="ps"><div class="p ${w===1?"w":w===2?"l":""} ${t1?"tbd":""}" onclick="${!t1&&m.p2!=="WALKOVER"&&m.p2!=="BYE"?"setW("+m.id+",1)":""}">${m.p1}</div><span class="vs">VS</span><div class="p ${w===2?"w":w===1?"l":""} ${t2?"tbd":""}" onclick="${!t2&&m.p1!=="WALKOVER"?"setW("+m.id+",2)":""}">${m.p2}</div></div><input class="si" placeholder="S1" ${isAdmin?"":"readonly"} value="${R["s1_"+m.id]||""}" onchange="R['s1_'+${m.id}]=this.value;sv();" title="Set 1"><input class="si" placeholder="S2" ${isAdmin?"":"readonly"} value="${R["s2_"+m.id]||""}" onchange="R['s2_'+${m.id}]=this.value;sv();" title="Set 2"><input class="si" placeholder="S3" ${isAdmin?"":"readonly"} value="${R["s3_"+m.id]||""}" onchange="R['s3_'+${m.id}]=this.value;sv();" title="Set 3"></div>`;}
-let lastAction=null;
-let isAdmin=localStorage.getItem('bt26admin')==='true';
-function toggleAdmin(){
-  if(isAdmin){isAdmin=false;localStorage.removeItem('bt26admin');render();return;}
-  const pw=prompt('Enter admin password:');
-  if(pw==='finops2026'){isAdmin=true;localStorage.setItem('bt26admin','true');render();}
-  else{alert('Incorrect password');}
-}
-function setW(id,p){if(!isAdmin)return;
-  if(R[id]===p){delete R[id];lastAction=null;}  // Click same = deselect
-  else{lastAction={id,prev:R[id]};R[id]=p;}
-  sv();render();updateUndo();
-}
-function undo(){if(lastAction){if(lastAction.prev)R[lastAction.id]=lastAction.prev;else delete R[lastAction.id];lastAction=null;sv();render();updateUndo();}}
-function updateUndo(){const btn=document.getElementById("undoBtn");if(btn)btn.style.display=lastAction?"block":"none";}
+M.filter(m=>m.p2==="WALKOVER").forEach(m=>{if(!R[m.id]){R[m.id]=1;sv();}});
+function gW(id){const m=M.find(x=>x.id===id);if(!m)return null;return R[id]===1?m.p1:R[id]===2?m.p2:null;}
+function getR2(code){const r1=M.filter(m=>m.cat===code);const r2=[];for(let i=0;i<r1.length;i+=2){if(i+1<r1.length){r2.push({id:1000+r1[i].id,cat:code,r:"R2",t:"R2",ct:0,p1:gW(r1[i].id)||("W#"+r1[i].id),p2:gW(r1[i+1].id)||("W#"+r1[i+1].id)});}else{r2.push({id:1000+r1[i].id,cat:code,r:"R2",t:"R2",ct:0,p1:gW(r1[i].id)||("W#"+r1[i].id),p2:"BYE"});}}return r2;}
+function getNext(prev,rnd){const nx=[];for(let i=0;i<prev.length;i+=2){if(i+1<prev.length){const w1=R[prev[i].id]===1?prev[i].p1:R[prev[i].id]===2?prev[i].p2:null;const w2=R[prev[i+1].id]===1?prev[i+1].p1:R[prev[i+1].id]===2?prev[i+1].p2:null;nx.push({id:prev[i].id+500,cat:prev[i].cat,r:rnd,t:rnd,ct:0,p1:w1||"TBD",p2:w2||"TBD"});}}return nx;}
+function setW(id,p){if(!isAdmin)return;if(R[id]===p){delete R[id];}else{R[id]=p;}sv();}
 function switchTo(i){cur=cats[i];render();}
 function cCode(c){return Object.entries(CM).find(([k,v])=>v===c)?.[0]||"";}
-function render(){const ab=document.getElementById('adminBtn');if(ab)ab.innerHTML=isAdmin?'🔓 Admin':'🔒 Viewer';if(ab)ab.style.borderColor=isAdmin?'#4caf50':'#555';if(ab)ab.style.color=isAdmin?'#4caf50':'#aaa';
+function rm(m){const w=R[m.id];const t1=m.p1&&(m.p1.startsWith("W#")||m.p1==="TBD");const t2=m.p2&&(m.p2.startsWith("W#")||m.p2==="TBD");const lk=!isAdmin?" locked":"";
+return '<div class="m"><div class="mn">'+(m.id<1000?m.id:".")+
+'</div><div class="mi">'+m.t+'<br>&#127992; Court '+(m.ct||"-")+
+'</div><div class="ps"><div class="p'+(w===1?" w":w===2?" l":"")+(t1?" tbd":"")+lk+
+'" onclick="setW('+m.id+',1)">'+m.p1+
+'</div><span class="vs">VS</span><div class="p'+(w===2?" w":w===1?" l":"")+(t2?" tbd":"")+lk+
+'" onclick="setW('+m.id+',2)">'+m.p2+
+'</div></div><div class="scores"><input class="si" placeholder="S1" value="'+(R["s1_"+m.id]||"")+'" onchange="R[\'s1_\'+'+m.id+']=this.value;sv();"'+(isAdmin?'':' readonly')+
+'><input class="si" placeholder="S2" value="'+(R["s2_"+m.id]||"")+'" onchange="R[\'s2_\'+'+m.id+']=this.value;sv();"'+(isAdmin?'':' readonly')+
+'><input class="si" placeholder="S3" value="'+(R["s3_"+m.id]||"")+'" onchange="R[\'s3_\'+'+m.id+']=this.value;sv();"'+(isAdmin?'':' readonly')+
+'></div></div>';}
+function render(){
+const ab=document.getElementById("adminBtn");if(ab){ab.innerHTML=isAdmin?" Admin":" Viewer";ab.style.borderColor=isAdmin?"#4caf50":"#555";ab.style.color=isAdmin?"#4caf50":"#aaa";}
 document.getElementById("tb").innerHTML=cats.map((c,i)=>'<div class="tab'+(c===cur?" active":"")+'" onclick="switchTo('+i+')">'+c+'</div>').join("");
 const el=document.getElementById("ct");
 if(cur==="Dashboard"){renderD(el);return;}
-const code=cCode(cur);const r1=M.filter(m=>m.cat===code);
-const r2=getR2(code);const qf=getNext(r2,"QF");const sf=getNext(qf,"SF");const fi=getNext(sf,"Final");
-let h='<div class="rt">Round 1 ('+r1.length+' matches)</div>';r1.forEach(m=>{h+=rm(m);});
-h+='<div class="rt">Round 2 ('+r2.length+' matches)</div>';r2.forEach(m=>{h+=rm(m);});
+const code=cCode(cur);const r1=M.filter(m=>m.cat===code);const r2=getR2(code);const qf=getNext(r2,"QF");const sf=getNext(qf,"SF");const fi=getNext(sf,"Final");
+let h='<div class="rt">Round 1 ('+r1.length+')</div>';r1.forEach(m=>{h+=rm(m);});
+h+='<div class="rt">Round 2 ('+r2.length+')</div>';r2.forEach(m=>{h+=rm(m);});
 if(qf.length>0){h+='<div class="rt">Quarter Final ('+qf.length+')</div>';qf.forEach(m=>{h+=rm(m);});}
-if(sf.length>0){h+='<div class="rt">Semi Final ('+sf.length+')</div>';sf.forEach(m=>{h+=rm(m);});}
-if(fi.length>0){h+='<div class="rt" style="border-color:gold;color:gold;">?? FINAL</div>';fi.forEach(m=>{h+=rm(m);});}
+if(sf.length>0){h+='<div class="rt">Semi Final</div>';sf.forEach(m=>{h+=rm(m);});}
+if(fi.length>0){h+='<div class="rt" style="border-color:gold;color:gold"> FINAL</div>';fi.forEach(m=>{h+=rm(m);});}
 el.innerHTML=h;}
 function renderD(el){
-const total=M.length,done=M.filter(m=>R[m.id]).length,pct=Math.round(done/total*100);
+const total=M.length,done=M.filter(m=>R[m.id]).length,pct=total>0?Math.round(done/total*100):0;
 const ts={};M.forEach(m=>{if(!ts[m.t])ts[m.t]=[];ts[m.t].push(m);});
 const times=Object.keys(ts).sort((a,b)=>{const pa=a.split(":"),pb=b.split(":");return(parseInt(pa[0])*60+parseInt(pa[1]))-(parseInt(pb[0])*60+parseInt(pb[1]));});
-let h=`<div class="sts"><div class="sc"><div class="n">${total}</div><div class="lb">Total R1</div></div><div class="sc"><div class="n">${done}</div><div class="lb">Done</div></div><div class="sc"><div class="n">${total-done}</div><div class="lb">Pending</div></div><div class="sc"><div class="n">${pct}%</div><div class="lb">Progress</div></div></div><div class="pb"><div class="pf" style="width:${pct}%"></div></div>`;
+let h='<div class="sts"><div class="sc"><div class="n">'+total+'</div><div class="lb">Total R1</div></div><div class="sc"><div class="n">'+done+'</div><div class="lb">Done</div></div><div class="sc"><div class="n">'+(total-done)+'</div><div class="lb">Pending</div></div><div class="sc"><div class="n">'+pct+'%</div><div class="lb">Progress</div></div></div><div class="pb"><div class="pf" style="width:'+pct+'%"></div></div>';
 h+='<div class="rt">Category Progress</div>';
-Object.entries(CM).forEach(([code,name])=>{const cm=M.filter(m=>m.cat===code);const cd=cm.filter(m=>R[m.id]).length;h+=`<div style="display:flex;justify-content:space-between;padding:6px 10px;border-bottom:1px solid #333"><span>${name}</span><span style="color:${cd===cm.length?"#4caf50":"#a8d8ea"}">${cd}/${cm.length}</span></div>`;});
-// Current slot
+Object.entries(CM).forEach(([code,name])=>{const cm=M.filter(m=>m.cat===code);const cd=cm.filter(m=>R[m.id]).length;h+='<div style="display:flex;justify-content:space-between;padding:5px 10px;border-bottom:1px solid #333"><span>'+name+'</span><span style="color:'+(cd===cm.length?"#4caf50":"#a8d8ea")+'">'+cd+'/'+cm.length+'</span></div>';});
 let curSlot=null;for(const t of times){if(ts[t].some(m=>!R[m.id])){curSlot=t;break;}}
-if(curSlot){const ongoing=ts[curSlot];h+=`<div class="rt green">?? ONGOING � ${curSlot} (${ongoing.filter(m=>!R[m.id]).length} in progress)</div>`;ongoing.sort((a,b)=>a.ct-b.ct).forEach(m=>{const w=R[m.id];h+=`<div class="m"><div class="mn">${m.id}</div><div class="mi">${CM[m.cat]||m.cat}<br>Court No# ${m.ct}</div><div class="ps"><div class="p ${w===1?"w":w===2?"l":""}" onclick="setW(${m.id},1)">${m.p1}</div><span class="vs">VS</span><div class="p ${w===2?"w":w===1?"l":""}" onclick="setW(${m.id},2)">${m.p2}</div></div></div>`;});}
-// All time slots
-h+='<div class="rt">?? Schedule by Time Slot</div>';
-times.forEach(t=>{const sm=ts[t];const cd=sm.filter(m=>R[m.id]).length;const icon=cd===sm.length?"?":cd>0?"??":"?";
-h+=`<div class="slot" onclick="this.nextElementSibling.classList.toggle('hidden')"><div style="display:flex;justify-content:space-between"><span style="font-weight:700;color:#a8d8ea">${icon} ${t}</span><span style="font-size:10px;color:#888">${cd}/${sm.length} done | ${sm.length} courts</span></div></div><div class="slot-matches hidden">`;
-sm.sort((a,b)=>a.ct-b.ct).forEach(m=>{const w=R[m.id];const wn=w===1?m.p1:w===2?m.p2:null;h+=`<div style="display:flex;padding:3px 12px;font-size:10px;border-left:3px solid ${w?"#4caf50":"#333"};margin:2px 0"><span style="width:70px;color:#ffd700">Court No# ${m.ct}</span><span style="width:80px;color:#888">${CM[m.cat]||""}</span><span style="flex:1;color:${w?"#4caf50":"#fff"}">${w?"?? "+wn:m.p1+" vs "+m.p2}</span></div>`;});
+if(curSlot){const og=ts[curSlot];h+='<div class="rt green"> LIVE NOW  '+curSlot+' ('+og.filter(m=>!R[m.id]).length+' active)</div>';og.sort((a,b)=>a.ct-b.ct).forEach(m=>{h+=rm(m);});}
+h+='<div class="rt"> &#128197; Schedule by Time Slot</div>';
+times.forEach(t=>{const sm=ts[t];const cd=sm.filter(m=>R[m.id]).length;const icon=cd===sm.length?"?":cd>0?"":"?";
+h+='<div class="slot" onclick="this.nextElementSibling.classList.toggle(\'hidden\')"><div style="display:flex;justify-content:space-between"><span style="font-weight:700;color:#a8d8ea">'+icon+' '+t+'</span><span style="font-size:9px;color:#888">'+cd+'/'+sm.length+' | '+sm.length+' courts</span></div></div><div class="hidden">';
+sm.sort((a,b)=>a.ct-b.ct).forEach(m=>{const w=R[m.id];const wn=w===1?m.p1:w===2?m.p2:null;h+='<div style="display:flex;padding:3px 10px;font-size:9px;border-left:3px solid '+(w?"#4caf50":"#333")+';margin:2px 0"><span style="width:65px;color:#ffd700">&#127992; Court '+m.ct+'</span><span style="width:70px;color:#888">'+(CM[m.cat]||"")+'</span><span style="flex:1;color:'+(w?"#4caf50":"#fff")+'">'+(w?" "+wn:m.p1+" vs "+m.p2)+'</span></div>';});
 h+='</div>';});
 el.innerHTML=h;}
 render();
