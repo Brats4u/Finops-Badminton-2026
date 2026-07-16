@@ -153,6 +153,13 @@ function setWinner(n, player) {
     else { db.ref('results/'+n+'/winner').set(player); }
 }
 
+function setNoShow(n) {
+    if (!isAdmin) return;
+    const cur = getWinner(n);
+    if (cur === 'NO_SHOW') { db.ref('results/'+n+'/winner').remove(); } // undo
+    else { db.ref('results/'+n+'/winner').set('NO_SHOW'); }
+}
+
 function setScore(n, field, val) {
     if (!isAdmin) return;
     db.ref('results/'+n+'/'+field).set(val);
@@ -163,7 +170,13 @@ function resolvePlayer(pStr, matchNo) {
     const m = pStr.match(/^Winner M#(\d+)$/);
     if (m) {
         const srcMatch = parseInt(m[1]);
+        // Check if the source match is a walkover — auto-resolve to the real player
+        const srcM = MATCHES.find(x => x.n === srcMatch);
+        if (srcM && srcM.p2 === 'WALKOVER') return srcM.p1;
+        if (srcM && srcM.p1 === 'WALKOVER') return srcM.p2;
+        // Check Firebase result
         const w = getWinner(srcMatch);
+        if (w === 'NO_SHOW') return 'BYE (No Show)';
         return w || pStr;
     }
     return pStr;
@@ -269,25 +282,34 @@ function renderCategory(cat) {
             const winner = getWinner(m.n);
             const scores = getScores(m.n);
             const isWO = m.p2 === 'WALKOVER';
-            const cardClass = isWO ? 'match-card walkover' : winner ? 'match-card has-winner' : 'match-card';
+            const isNoShow = winner === 'NO_SHOW';
+            const cardClass = isWO ? 'match-card walkover' : isNoShow ? 'match-card walkover' : winner ? 'match-card has-winner' : 'match-card';
             
             html += '<div class="'+cardClass+'">';
             html += '<div class="match-header"><span>M#'+m.n+' | '+m.t+' | Court '+m.c+'</span>';
-            if (winner) html += '<span class="badge badge-done">Completed</span>';
+            if (isNoShow) html += '<span class="badge" style="background:#ef4444;color:#fff">No Show</span>';
+            else if (winner) html += '<span class="badge badge-done">Completed</span>';
             else if (!isWO) html += '<span class="badge badge-live">Pending</span>';
             else html += '<span class="badge" style="background:#f59e0b;color:#fff">Walkover</span>';
             html += '</div>';
             
             html += '<div class="match-players">';
-            const p1Class = 'player p1'+(winner===p1?' winner':'')+(isAdmin && !isWO?' clickable':'');
-            const p2Class = 'player p2'+(winner===p2?' winner':'')+(isAdmin && !isWO && p2!=='WALKOVER'?' clickable':'');
-            const p1Click = isAdmin && !isWO ? ' onclick="setWinner('+m.n+',\''+p1.replace(/'/g,"\\'")+'\')"' : '';
-            const p2Click = isAdmin && !isWO && p2!=='WALKOVER' ? ' onclick="setWinner('+m.n+',\''+p2.replace(/'/g,"\\'")+'\')"' : '';
+            const p1Class = 'player p1'+(winner===p1?' winner':'')+(isAdmin && !isWO && !isNoShow?' clickable':'');
+            const p2Class = 'player p2'+(winner===p2?' winner':'')+(isAdmin && !isWO && p2!=='WALKOVER' && !isNoShow?' clickable':'');
+            const p1Click = isAdmin && !isWO && !isNoShow ? ' onclick="setWinner('+m.n+',\''+p1.replace(/'/g,"\\'")+'\')"' : '';
+            const p2Click = isAdmin && !isWO && p2!=='WALKOVER' && !isNoShow ? ' onclick="setWinner('+m.n+',\''+p2.replace(/'/g,"\\'")+'\')"' : '';
             
-            html += '<div class="'+p1Class+'"'+p1Click+'>'+p1+'</div>';
+            html += '<div class="'+p1Class+'"'+p1Click+'>'+(isNoShow?'<s>'+p1+'</s>':p1)+'</div>';
             html += '<div class="vs">VS</div>';
-            html += '<div class="'+p2Class+'"'+p2Click+'>'+p2+'</div>';
+            html += '<div class="'+p2Class+'"'+p2Click+'>'+(isNoShow?'<s>'+p2+'</s>':p2)+'</div>';
             html += '</div>';
+            
+            // No Show button (admin only, non-walkover, no winner yet OR already no-show for undo)
+            if (isAdmin && !isWO && (!winner || isNoShow)) {
+                html += '<div style="text-align:center;margin-top:6px">';
+                html += '<button onclick="setNoShow('+m.n+')" style="padding:4px 12px;border:none;border-radius:4px;font-size:0.7rem;cursor:pointer;'+(isNoShow?'background:#22c55e;color:#fff':'background:#ef4444;color:#fff')+'">'+(isNoShow?'Undo No Show':'Both No Show')+'</button>';
+                html += '</div>';
+            }
             
             // Score inputs (admin only, non-walkover)
             if (!isWO) {
